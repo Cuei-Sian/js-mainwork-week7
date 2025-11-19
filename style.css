@@ -374,10 +374,19 @@ body {
   display: flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  align-items: center;
-  max-width: 920px;
+  justify-content: space-between; /* 左右分散 */
+  align-items: flex-start; /* 讓兩邊都靠上對齊 */
+  /* align-items: center; */
+  /* max-width: 920px; */
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 50px 0;
+  /* padding: 50px 0; */
+}
+
+.chart-area {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end; /* 圖表往右 */
 }
 
 .search-area p {

@@ -123,6 +123,8 @@ addTicketBtn.addEventListener("click", function () {
   regionSearch.value = "";
   //將資料渲染到畫面上
   renderTickets(data);
+  //同步將資料更新到圖表上
+  renderChart(data);
 });
 
 // LV3-1.修改下拉式篩選清單第一步
@@ -173,12 +175,26 @@ function renderChart(data) {
   // 將 newData 丟入 c3 產生器
   const chart = c3.generate({
     bindto: "#chart",
+    size: {
+      width: 160,
+      height: 160,
+    },
+
     data: {
       columns: newData,
       type: "donut",
+      colors: {
+        台北: "#26C0C7",
+        台中: "#5151D3",
+        高雄: "#E68618",
+      },
     },
     donut: {
-      title: "地區",
+      title: "套票地區比重",
+      width: 10,
+      label: {
+        show: false,
+      },
     },
   });
 }
