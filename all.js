@@ -73,6 +73,7 @@
 //     },
 //   });
 // }
+
 // ---------------------------------------------------
 
 let data = [];
@@ -122,9 +123,11 @@ addTicketBtn.addEventListener("click", function () {
   //將篩選的地區選項自動跳回到全部地區的選項
   regionSearch.value = "";
   //將資料渲染到畫面上
-  renderTickets(data);
-  //同步將資料更新到圖表上
-  renderChart(data);
+  // renderTickets(data);
+  // 主線任務七:同步將資料更新到圖表上
+  // renderChart(data);
+  //取代renderTickets(data);、 renderChart(data);
+  handleRender(data);
 });
 
 // LV3-1.修改下拉式篩選清單第一步
@@ -144,6 +147,64 @@ regionSearch.addEventListener("change", function () {
     renderTickets(filterData);
   }
 });
+
+//LV3：因為會使用到以下跟LV1一樣渲染的套票資訊，所以包裝成函式
+function renderTickets(tickets) {
+  // LV1
+  let ticketList = "";
+  tickets.forEach(function (ticket) {
+    ticketList += `<li class="ticketCard">
+        <div class="ticketCard-img">
+          <a href="#">
+            <img src="${ticket.imgUrl}" alt="">
+          </a>
+          <div class="ticketCard-region">${ticket.area}</div>
+          <div class="ticketCard-rank">${ticket.rate}</div>
+        </div>
+        <div class="ticketCard-content">
+          <div>
+            <h3>
+              <a href="#" class="ticketCard-name">${ticket.name}</a>
+            </h3>
+            <p class="ticketCard-description">
+              ${ticket.description}
+            </p>
+          </div>
+          <div class="ticketCard-info">
+            <p class="ticketCard-num">
+              <span><i class="fas fa-exclamation-circle"></i></span>
+              剩下最後 <span id="ticketCard-num">${ticket.group}</span> 組
+            </p>
+            <p class="ticketCard-price">
+              TWD <span id="ticketCard-price">$${ticket.price}</span>
+            </p>
+          </div>
+        </div>
+      </li>`;
+  });
+  ticketCardArea.innerHTML = ticketList;
+  //LV3-2.同步更新資訊文字"本次搜尋共 0 筆資料"
+  searchResultText.textContent = `本次搜尋共 ${tickets.length} 筆資料`;
+}
+renderTickets(data); //呼叫函式
+
+function getData() {
+  axios
+    .get(url)
+    .then(function (response) {
+      //使用物件取值方式取得資料
+      console.log(response.data.data);
+      data = response.data.data;
+      // renderTickets(data);
+      // renderChart(data); //主線任務七
+      //取代renderTickets(data);、 renderChart(data);
+      handleRender(data);
+    })
+    .catch(function () {
+      console.log("發生錯誤");
+    });
+}
+getData();
 
 // 主線任務七：將取回來的資料建立成圖表，使用建立函式來執行渲染圖表
 function renderChart(data) {
@@ -199,58 +260,8 @@ function renderChart(data) {
   });
 }
 
-//LV3：因為會使用到以下跟LV1一樣渲染的套票資訊，所以包裝成函式
-function renderTickets(tickets) {
-  // LV1
-  let ticketList = "";
-  tickets.forEach(function (ticket) {
-    ticketList += `<li class="ticketCard">
-        <div class="ticketCard-img">
-          <a href="#">
-            <img src="${ticket.imgUrl}" alt="">
-          </a>
-          <div class="ticketCard-region">${ticket.area}</div>
-          <div class="ticketCard-rank">${ticket.rate}</div>
-        </div>
-        <div class="ticketCard-content">
-          <div>
-            <h3>
-              <a href="#" class="ticketCard-name">${ticket.name}</a>
-            </h3>
-            <p class="ticketCard-description">
-              ${ticket.description}
-            </p>
-          </div>
-          <div class="ticketCard-info">
-            <p class="ticketCard-num">
-              <span><i class="fas fa-exclamation-circle"></i></span>
-              剩下最後 <span id="ticketCard-num">${ticket.group}</span> 組
-            </p>
-            <p class="ticketCard-price">
-              TWD <span id="ticketCard-price">$${ticket.price}</span>
-            </p>
-          </div>
-        </div>
-      </li>`;
-  });
-  ticketCardArea.innerHTML = ticketList;
-  //LV3-2.同步更新資訊文字"本次搜尋共 0 筆資料"
-  searchResultText.textContent = `本次搜尋共 ${tickets.length} 筆資料`;
+//將重覆呼叫的renderTickets(data);、renderChart(data);包裝成函式呼叫
+function handleRender(data) {
+  renderTickets(data);
+  renderChart(data);
 }
-renderTickets(data); //呼叫函式
-
-function getData() {
-  axios
-    .get(url)
-    .then(function (response) {
-      //使用物件取值方式取得資料
-      console.log(response.data.data);
-      data = response.data.data;
-      renderTickets(data);
-      renderChart(data); //主線任務七
-    })
-    .catch(function () {
-      console.log("發生錯誤");
-    });
-}
-getData();
